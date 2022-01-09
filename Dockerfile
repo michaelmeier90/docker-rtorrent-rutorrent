@@ -301,14 +301,13 @@ RUN apk --update --no-cache add \
       npm \     
     && echo "https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz" \
     && mkdir /usr/flood && cd /usr/flood && wget -qO- https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz | tar xz --strip 1 \
-    && npm install && npm cache clean --force \    
-    && apk del build-dependencies \
+    && npm install && npm cache clean --force \        
     && rm -rf /var/cache/apk/* /tmp/*
 
 
 COPY rootfs /
 
-RUN chmod +x /usr/local/bin/* /etc/s6.d/*/* /etc/s6.d/.s6-svscan/* \
+RUN chmod +x /usr/local/bin/*  \
  && cd /usr/flood/ && npm run build
 
 LABEL org.opencontainers.image.description="Alpine Linux with s6 Overlay, Rtorrent, Rutorrent, flood"
