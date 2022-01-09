@@ -1,3 +1,8 @@
+# Set one or more individual labels
+
+
+
+
 ARG ALPINE_S6_TAG=3.14-2.2.0.3
 ARG RTORRENT_VERSION=0.9.8
 ARG LIBTORRENT_VERSION=0.13.8
@@ -302,6 +307,13 @@ COPY rootfs /
 
 RUN chmod +x /usr/local/bin/* /etc/s6.d/*/* /etc/s6.d/.s6-svscan/* \
  && cd /usr/flood/ && npm run build
+
+LABEL org.opencontainers.image.description="Alpine Linux with s6 Overlay, Rtorrent, Rutorrent, flood"
+LABEL org.opencontainers.image.url="https://github.com/michaelmeier90/docker-rtorrent-rutorrent"
+LABEL org.opencontainers.image.vendor="CrayMax"
+LABEL org.opencontainers.image.maintainer="MichaelMeier90"
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.release-date="2021-01-09"
 
 VOLUME [ "/data", "/downloads", "/passwd" ,"/flood-db"]
 ENTRYPOINT [ "/init" ]
