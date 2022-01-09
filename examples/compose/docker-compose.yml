@@ -1,54 +1,62 @@
 version: "3.2"
-
+networks:
+  frontend:
+    external: true
 services:
-  geoip-updater:
+  geoip-updater-test:
     image: crazymax/geoip-updater:latest
     volumes:
-      - "./data/geoip:/data"
-    env_file:
-      - "./geoip-updater.env"
-    restart: always
+      - "/mnt/appdata/rutorrent-test/data/geoip:/data"
+    networks:
+      - frontend
+    restart: unless-stopped
 
-  rtorrent-rutorrent:
-    image: crazymax/rtorrent-rutorrent:latest
+  rtorrent-rutorrent-test:    
+    image: michael646/docker-rtorrent-rutorrent-flood:latest
     expose:
       - "${RT_DHT_PORT}/udp"
       - "${XMLRPC_PORT}"
       - "${RUTORRENT_PORT}"
       - "${WEBDAV_PORT}"
       - "${RT_INC_PORT}"
+      - "${FLOOD_PORT}"
     ports:
       - target: ${RT_DHT_PORT}
         published: ${RT_DHT_PORT}
         protocol: udp
       - target: ${RUTORRENT_PORT}
-        published: ${RUTORRENT_PORT}
+        published: 8080
         protocol: tcp
-      - target: ${WEBDAV_PORT}
-        published: ${WEBDAV_PORT}
-        protocol: tcp
+      #- target: ${WEBDAV_PORT}
+      #  published: 9001
+      #  protocol: tcp
       - target: ${RT_INC_PORT}
         published: ${RT_INC_PORT}
         protocol: tcp
-    env_file:
-      - "rtorrent-rutorrent.env"
-      - ".env"
+      - target: "${FLOOD_PORT}"
+        published: "${FLOOD_PORT}"
+        protocol: tcp
     volumes:
-      - "./data:/data"
-      - "./downloads:/downloads"
-      - "./passwd:/passwd"
+      - "/mnt/appdata/rutorrent-test/data:/data"
+      - "/mnt/media/Download:/downloads"
+      - "/mnt/appdata/rutorrent-test/data/passwd:/passwd"
+
     ulimits:
       nproc: 65535
       nofile:
         soft: 32000
         hard: 40000
-    restart: always
+    restart: unless-stopped
+    networks:
+      - frontend
 
-  rtorrent-logs:
+  rtorrent-logs-test:
     image: bash
     command: bash -c 'tail -f /log/*.log'
     depends_on:
-      - rtorrent-rutorrent
+      - rtorrent-rutorrent-test
     volumes:
-      - "./data/rtorrent/log:/log"
-    restart: always
+      - "/mnt/appdata/rutorrent-test/data/rtorrent/log:/log"
+    restart: unless-stopped
+    networks:
+      - frontend
