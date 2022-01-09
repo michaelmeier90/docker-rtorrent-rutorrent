@@ -10,8 +10,8 @@ throttle.max_peers.seed.set = 50
 throttle.max_uploads.set = 15
 
 # Global upload and download rate in KiB. "0" for unlimited
-throttle.global_down.max_rate.set_kb = 0
-throttle.global_up.max_rate.set_kb = 0
+throttle.global_down.max_rate.set_kb = 100000
+throttle.global_up.max_rate.set_kb = 50000
 
 # Enable DHT support for trackerless torrents or when all trackers are down
 # May be set to "disable" (completely disable DHT), "off" (do not start DHT),
@@ -60,4 +60,4 @@ method.insert = d.move_to_complete, simple, "d.directory.set=$argument.1=; execu
 method.set_key = event.download.finished,move_complete,"d.move_to_complete=$d.data_path=,$d.get_finished_dir="
 
 # Erase data when torrent deleted (no need erasedata plugin on ruTorrent)
-method.set_key = event.download.erased,delete_erased,"execute=rm,-rf,--,$d.data_path="
+# method.set_key = event.download.erased,delete_erased,"execute=rm,-rf,--,$d.data_path="

@@ -13,6 +13,7 @@ ARG NGINX_VERSION=1.21.1
 ARG NGINX_DAV_VERSION=3.0.0
 ARG NGINX_UID=102
 ARG NGINX_GID=102
+ARG FLOOD_VER=4.7.0
 
 FROM --platform=${BUILDPLATFORM:-linux/amd64} crazymax/alpine-s6:${ALPINE_S6_TAG} AS download
 RUN apk --update --no-cache add curl git subversion tar tree xz
@@ -287,9 +288,22 @@ RUN apk --update --no-cache add \
   && curl --version \
   && rm -rf /tmp/* /var/cache/apk/*
 
+#INSTALL FLOOD
+
+RUN apt --update --no-cache add \
+    && apt-get install -y nodejs \    
+    && mkdir /usr/flood && cd /usr/flood && wget -qO- https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz | tar xz --strip 1 \
+    && npm install && npm cache clean --force \    
+    && apk del build-dependencies \
+    && rm -rf /var/cache/apk/* /tmp/*
+
+
 COPY rootfs /
 
-VOLUME [ "/data", "/downloads", "/passwd" ]
+RUN chmod +x /usr/local/bin/* /etc/s6.d/*/* /etc/s6.d/.s6-svscan/* \
+ && cd /usr/flood/ && npm run build
+
+VOLUME [ "/data", "/downloads", "/passwd" ,"/flood-db"]
 ENTRYPOINT [ "/init" ]
 
 HEALTHCHECK --interval=30s --timeout=20s --start-period=10s \
