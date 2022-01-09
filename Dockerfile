@@ -296,7 +296,8 @@ RUN apk --update --no-cache add \
 #INSTALL FLOOD
 
 RUN apk --update --no-cache add \
-      nodejs \     
+      nodejs \
+      npm \     
     && mkdir /usr/flood && cd /usr/flood && wget -qO- https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz | tar xz --strip 1 \
     && npm install && npm cache clean --force \    
     && apk del build-dependencies \
