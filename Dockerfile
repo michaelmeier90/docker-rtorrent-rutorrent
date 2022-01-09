@@ -18,7 +18,7 @@ ARG NGINX_VERSION=1.21.1
 ARG NGINX_DAV_VERSION=3.0.0
 ARG NGINX_UID=102
 ARG NGINX_GID=102
-ARG FLOOD_VER=4.7.0
+
 
 FROM --platform=${BUILDPLATFORM:-linux/amd64} crazymax/alpine-s6:${ALPINE_S6_TAG} AS download
 RUN apk --update --no-cache add curl git subversion tar tree xz
@@ -294,11 +294,12 @@ RUN apk --update --no-cache add \
   && rm -rf /tmp/* /var/cache/apk/*
 
 #INSTALL FLOOD
+ARG FLOOD_VER=4.7.0
 
 RUN apk --update --no-cache add \
       nodejs \
       npm \     
-    && echo "https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz"
+    && echo "https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz" \
     && mkdir /usr/flood && cd /usr/flood && wget -qO- https://github.com/jesec/flood/archive/v${FLOOD_VER}.tar.gz | tar xz --strip 1 \
     && npm install && npm cache clean --force \    
     && apk del build-dependencies \
